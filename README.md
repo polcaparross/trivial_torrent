@@ -1,89 +1,55 @@
-# Trivial Torrent Project: Client and Server
+## Trivial Torrent (Conexión UDP)
 
-## Trivial Torrent Client
+Este repositorio contiene una implementación básica de Trivial Torrent utilizando UDP (User Datagram Protocol) para la comunicación entre clientes y servidor.
 
-You need to implement the client part of the Trivial Torrent protocol. See the Trivial Torrent protocol specification document for details (section 2.3.1).
+### Descripción
 
-Use the file `src/ttorrent.c`.
+Trivial Torrent es una aplicación que permite la transferencia de archivos de manera simplificada entre un cliente y un servidor. En esta versión, se utiliza UDP para la comunicación, lo que proporciona una comunicación más ligera y sin conexión.
 
-The `ttorrent` command shall work as follows:
+### Funcionalidades
 
-~~~{.diff}
-$ bin/ttorrent file.ttorrent
-~~~
+- **Transferencia de Archivos**: Los clientes pueden solicitar bloques de archivos al servidor y recibirlos a través de la red.
+- **Servidor de Torrent**: El servidor escucha las solicitudes de los clientes y responde proporcionando los bloques solicitados, si están disponibles.
 
-## Trivial Torrent Server
+### Tecnologías Utilizadas
 
-Implement the server part of the Trivial Torrent protocol. See the Trivial Torrent protocol specification document for details (2.3.2).
+- **C**: Lenguaje de programación utilizado para la implementación del cliente y servidor.
+- **UDP (User Datagram Protocol)**: Protocolo de comunicación utilizado para la transferencia de datos entre cliente y servidor.
+- **Sockets**: Utilizados para la creación y gestión de conexiones de red.
 
-Use the file `src/ttorrent.c`.
+### Instrucciones de Uso
 
-The `ttorrent` command shall be extended to work as follows:
+1. Clona este repositorio en tu máquina local.
+2. Compila el cliente y el servidor utilizando un compilador C de tu elección (por ejemplo, gcc):
 
-~~~{.diff}
-$ bin/ttorrent -l 8080 file.ttorrent
-~~~
+    ```bash
+    gcc -o client client.c
+    gcc -o server server.c
+    ```
 
-### Multi-client implementation strategies
+3. Ejecuta el servidor en una terminal:
 
-The server part can be implemented using two different strategies: employing a *forking server*, or employing *non-blocking sockets*.
-Employing non-blocking sockets can be *very* challenging. Follow one of the two approaches based on your personal preferences.
-**Follow the conservative approach if you are not sure which approach is best for you.**
+    ```bash
+    ./server [puerto] [ruta_del_archivo]
+    ```
 
-| Approach       | Description                                                                      |
-| :-             | :------------                                                                    |
-| *Conservative* | First implement the server employing a forking server model (mandatory; 70% grade), then upgrade the server to employ non-blocking sockets (optional; 30% grade). |
-| *Audacious*    | Implement *directly* a server employing non-blocking sockets (100% grade).       |
+    - `[puerto]`: Puerto en el que el servidor escuchará las solicitudes de los clientes.
+    - `[ruta_del_archivo]`: Ruta del archivo del cual se servirán los bloques.
 
-Note: servers employing non-blocking sockets must employ a single process and must not employ threads.
+4. Ejecuta el cliente en otra terminal para solicitar bloques del servidor:
 
-## Practical Details
+    ```bash
+    ./client [dirección_ip_servidor] [puerto_servidor] [número_de_bloque]
+    ```
 
-### Building
+    - `[dirección_ip_servidor]`: Dirección IP del servidor.
+    - `[puerto_servidor]`: Puerto en el que el servidor está escuchando.
+    - `[número_de_bloque]`: Número del bloque que se solicitará al servidor.
 
-Use `make` in a terminal to build your project.
+### Notas Adicionales
 
-~~~{.bash}
-$ make
-~~~
+- Este proyecto es una implementación básica y puede no ser adecuado para entornos de producción.
+- La comunicación UDP es más ligera que la comunicación TCP, pero no garantiza la entrega de los paquetes ni el orden de llegada.
+- Se recomienda utilizar este proyecto con fines educativos o de prueba.
 
-This will create the executable file `bin/ttorrent`.
-
-### Reference binary
-
-For your convenience, a reference binary is provided in the `reference_binary` directory. You can use this binary as a reference server while you develop your client,
-and as a reference client while you develop your server.
-
-### Testing
-
-Some preliminary tests on the trivial torrent client can be performed as follows.
-
-In one terminal run the reference server:
-
-~~~{.bash}
-$ reference_binary/ttorrent -l 8080 torrent_samples/server/test_file_server.ttorrent
-~~~
-
-In another terminal employ your client to download the file that the server is making available.
-
-~~~{.bash}
-$ bin/ttorrent torrent_samples/client/test_file.ttorrent
-~~~
-
-You can compare the original and the downloaded files using `cmp` to make sure they are equal.
-
-~~~{.bash}
-$ cmp torrent_samples/client/test_file.ttorrent torrent_samples/server/test_file_server.ttorrent
-~~~
-
-Note: this command does not output anything if both files are equal.
-
-Additional tests may be run with:
-
-~~~{.bash}
-$ make test
-~~~
-
-Note that gitlab runs `make test` for you every time you push something to this repository. You can see the results in the `CI/CD` tab.
-
-
+¡Disfruta explorando Trivial Torrent con conexión UDP! Si tienes alguna pregunta o sugerencia, no dudes en comunicarte con el desarrollador. ¡Feliz transferencia de archivos! 🚀📡
